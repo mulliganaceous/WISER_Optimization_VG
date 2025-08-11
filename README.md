@@ -1,72 +1,28 @@
-# D-WAVE implementation of the reduced OneOpto model.
+# Portfolio Optimization
 
-Author: Hao Mack
+Project name: 
+* Annealed Portfolio
 
-We will work in parallel to consider different classical and quantum methods to implement the _simplified OneOpto optimization model_. Our goal is to match the value of each characteristic per each risk group to its target as closely as possible while respecting the many guardrails.
+Team Members:
+* Hao Mack Yang (gst-Z2od5sCatjVtRvH)
 
-The implementation is in the form of a single Jupyter notebook, and a sample JSON of selected bonds and their bounds created by Mackenson.
+Presentation Slide:
+* 
 
-## Mathematical formulation
+This **Washington Institute for STEM Entrepreneurship and Research** project demonstrates an alternative quantum computing method to optimize the portfolios based on the investor's preferences.
 
-We are given three sets, $C$, $L$, $J$, and two global parameters, $N$, and $\vec{r}$ as the input. Our decision variables are the $\vec{y}$, indicating the particular bonds are included in the portfolio or not.
+The goal is to minimize an objective function, the sum of the squared difference between the actual amount against the target amount of a target characteristic by risk bucket membership and characteristic while subject to guardrail constraints regarding the actual amounts. The minimization of this objective function allows us to maximize the expected utility of our portfolio. Our output is a set of binary decision variables indicating whether the particular bond is included in the portfolio.
 
-The objective function is a quadratic optimization function in the $\vec{y}$, subject to four linear inequality constraints.
+Our approach uses the D-WAVE quantum annealing method, as opposed to the variational quantum algorithm implemented in Qiskit or Xanadu. Quantum annealing is especially well-suited for scalability and handling quadratic optimization problems, even with constraints. Unfortunately, we are not able to get access to the actual quantum processor through LEAP, so we ended up using one of D-WAVE's simulators. Additionally, constrained binary quadratic optimization problem still requires a hybrid approach.
 
-### Securities
+The structure of this submission is such that with elementary knowledge of Python or Jupyter plus the introduction of virtual environments, one can interactively see the process of data gathering, guardrail inputting, problem conversion, and simulated annealing, and presentation with one single click of the play button.
 
-$C$ is denoted as the set of securities. Each security $c \in C$ is expressed as a quintuple $(p_c, m_c, M_c, i_c, \delta_c)$, where:
+With the exception of the README and presentations, all content that belongs to the team is in the `implementation` folder relative to the root working directory. Inside contains another README.md regarding the mathematical formulation, an `.ipynb` file depicting a large dataset run with randomly set bounds, a `.py` file depicting repeated runs of the small dataset runs, and the `bond_data1.json` generated for listing the selected attributes of the reduced dataset.
 
-* $p_c$ is the market price
-* $m_c$ and $M_c$ are the minimum and maximum trade value
-* $i_c$ is the basket inventory
-* $\delta_c$ is the minimum increment of a price
+Upon running the script, a `dwave_result.csv` file will be generated at the `implementation` working directory (caveat: it is relative to the working directory of VS Code if you are running on VS Code), and various results files depicting the energy value, bond selection, and constraint satisfaction of each entry ordered by the D-WAVE energy rankings (the lowest energy selection is considered the best solution.)
 
-### Risk buckets
+We have supplied the `result` and `result2` images, depicting the energy and secondary constraint satisfaction trends ranked by D-WAVE energy rating, and the `qaoamatrix.png` images, depicting the symmetrical matrix representing the binary QAOA matrix.
 
-There is a set $L$ of risk buckets, and for each element of the risk bucket $\ell \in L$, there is a corresponding set of bond securities belonging to that risk bucket. Thus, there is a "set of sets" structure of the form $(\ell, \mathbb{K}_\ell)$.
+Please bear in mind that there are some limitations present in this project, especially concerning the potential differences between the actual boundaries used by the reference method against our method. The structure of the code is designed such that there should be minimal debugging and code redundancy when correcting the code to match the reference method to evaluate against.
 
-* $L$ is the set of risk buckets.
-* $\mathbb{K}_l$ is the set of bond securities in risk bucket $\ell$.
-    * It is noted that it is not necessarily the case that the risk buckets are mutually exclusive.
-
-### Characteristics and Guardrails
-
-There is a set $J$ consisting of the characteristics of the investments. It is a strict subset of the fields that provide bond information. Optimization bonds are based on a combination of an element in $J$, and another element in either $C$ or $L$. $J$ is strictly a preference for the investor.
-
-There are $|J|(2|L| + |C|)$ guardrails with a two-dimensional index, which one of the indices, $j$, is from $J$.
-
-* $\rho_j$ represent the weight for that characteristic when determining the energy of the optimization problem to minimize.
-
-Each element $j \in J$ is a triple $(\vec{K}_{j}, \vec{b}_{j}, \vec{\beta}_{j})$ which the length of the vector depends on $|L|$ for $\vec{K}_j$ and $\vec{b}_j$, and on $|C|$ for $\vec{\beta}_j$. The elements of each vector element of $\vec{K}_j$ and $\vec{b}_j$ are themselves an interval containing a guardrail and a target value.
-
-* $K_{\ell, j} = [K^{\textrm{low}}_{\ell, j}, K^{\textrm{target}}_{\ell, j}, K^{\textrm{up}}_{\ell, j}]$ are the target and guardrails of a characteristic $j$ in risk bucket $\ell$.
-* $b_{\ell, j} = [b^{\textrm{up}}_{\ell, j}, b^\textrm{low}_{\ell, j}]$ denote the benchmark guardrails.
-* $\beta_{c, j}$ denote the contribution of a unit of bond $c$ to the target of characteristic $j$.
-
-### Global parameters
-
-Two global hyperparameters will be used to find a solution for various use cases.
-
-* $N$ denotes the maximum number of bonds in the portfolio.
-* $R = [m_R, M_R]$ denote the range of the residual cash flow of portfolio. 
-    * Namely, $m_R$ denote the minimum cash flow, and $M_R$ denote the maximum cash flow. Note that they are signed quantities.
-
-### Decision variable
-
-Let $\vec{y}$ denote the solution set. Each entry of $\vec{y}$ is indexed by an element $c \in C$. The objective function involves the optimzal allocation of the bonds and how many of each bond to allocate. The amount of bonds to allocate, $x_c$, is simplified as a function of $c$ and $y$: $x_c = \frac{m_c + \min{M_c, i_c}}{2\delta_c}$, the average number of bonds from what is feasible for that $c$.
-
-### Optimization problem
-
-We must match the value of each characteristic $j \in J$ in each risk group $\ell \in L$ to its target, $K^{\textrm{target}}_{\ell, j}$, subject to four constraints. 
-
-Note that if a quantity $s \in [I^{\textrm{low}}, I^{\textrm{target}}, I^{\textrm{up}}]$ or $s \in [I^{\textrm{low}}, I^{\textrm{up}}]$, the inequality becomes $I^{\textrm{low}} \leq s \leq I^{\textrm{up}}$.
-
-$$
-\begin{align*}
-  E &= \min_{\vec{y}} \sum_{\ell \in L} \sum_{j \in J} \rho_j \left(\sum_{c\in{\mathbb{K}_{\ell}}} \beta_{c, j} x_c - K^{\textrm{target}}_{\ell, j}\right)^2 \\
-  \sum_{c \in C} y_c &\leq N \\
-  \sum_{c \in \mathbb{K}_{\ell}} \beta_{c,j}y_c &\in K_{\ell, j} \\
-  \sum_{c \in C} \frac{p_c \delta_c}{100} x_c &\in R \\
-  \sum_{c \in \mathbb{K}_{\ell}} \frac{p_c \delta_c}{100} \beta_{c,j} x_c &\in b_{\ell, j}
-\end{align*}
-$$
+Word count: 457

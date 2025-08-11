@@ -4,9 +4,11 @@ Author: Hao Mack
 
 We will work in parallel to consider different classical and quantum methods to implement the _simplified OneOpto optimization model_. Our goal is to match the value of each characteristic per each risk group to its target as closely as possible while respecting the many guardrails.
 
-The implementation is in the form of a single Jupyter notebook, and a sample JSON of selected bonds and their bounds created by Mackenson.
+The implementation is in the form of a single Jupyter notebook.
 
-## Mathematical formulation
+Part 1 is detailed on the README file itself. All other parts are in the `implementation.ipynb`.
+
+## Mathematical formulation (Part 2)
 
 We are given three sets, $C$, $L$, $J$, and two global parameters, $N$, and $\vec{r}$ as the input. Our decision variables are the $\vec{y}$, indicating the particular bonds are included in the portfolio or not.
 
@@ -40,7 +42,7 @@ There are $|J|(2|L| + |C|)$ guardrails with a two-dimensional index, which one o
 Each element $j \in J$ is a triple $(\vec{K}_{j}, \vec{b}_{j}, \vec{\beta}_{j})$ which the length of the vector depends on $|L|$ for $\vec{K}_j$ and $\vec{b}_j$, and on $|C|$ for $\vec{\beta}_j$. The elements of each vector element of $\vec{K}_j$ and $\vec{b}_j$ are themselves an interval containing a guardrail and a target value.
 
 * $K_{\ell, j} = [K^{\textrm{low}}_{\ell, j}, K^{\textrm{target}}_{\ell, j}, K^{\textrm{up}}_{\ell, j}]$ are the target and guardrails of a characteristic $j$ in risk bucket $\ell$.
-* $b_{\ell, j} = [b^{\textrm{up}}_{\ell, j}, b^\textrm{low}_{\ell, j}]$ denote the benchmark guardrails.
+* $b_{\ell, j} = [b^{\textrm{up}}_{\ell, j}, b^\textrm{low}_{\ell, j}]$ denote the guardrails for the weighed count of bonds. (unused)
 * $\beta_{c, j}$ denote the contribution of a unit of bond $c$ to the target of characteristic $j$.
 
 ### Global parameters
