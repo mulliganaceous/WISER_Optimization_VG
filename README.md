@@ -17,7 +17,7 @@ Our approach uses the D-WAVE quantum annealing method, as opposed to the variati
 
 The structure of this submission is such that with elementary knowledge of Python or Jupyter plus the introduction of virtual environments, one can interactively see the process of data gathering, guardrail inputting, problem conversion, and simulated annealing, and presentation with one single click of the play button.
 
-With the exception of the README and presentations, all content that belongs to the team is in the `implementation` folder relative to the root working directory. Inside contains another README.md regarding the mathematical formulation, an `.ipynb` file depicting a large dataset run with randomly set bounds, a `.py` file depicting repeated runs of the small dataset runs, and the `bond_data1.json` generated for listing the selected attributes of the reduced dataset.
+With the exception of the README and presentations, all content that belongs to the team is in the `implementation` folder relative to the root working directory. Inside contains another README.md regarding the mathematical formulation, an `.ipynb` file depicting a large dataset run with randomly set bounds, a slightly modified `.ipynb` file from the `lp` bounds, a `.py` file depicting repeated runs of the small dataset runs, and the `bond_data1.json` generated for listing the selected attributes of the reduced dataset.
 
 Upon running the script, a `dwave_result.csv` file will be generated at the `implementation` working directory (caveat: it is relative to the working directory of VS Code if you are running on VS Code), and various results files depicting the energy value, bond selection, and constraint satisfaction of each entry ordered by the D-WAVE energy rankings (the lowest energy selection is considered the best solution.)
 
@@ -25,4 +25,4 @@ We have supplied the `result` and `result2` images, depicting the energy and sec
 
 Please bear in mind that there are some limitations present in this project, especially concerning the potential differences between the actual boundaries used by the reference method against our method. The structure of the code is designed such that there should be minimal debugging and code redundancy when correcting the code to match the reference method to evaluate against.
 
-Word count: 457
+Word count: 460
