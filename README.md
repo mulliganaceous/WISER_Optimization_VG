@@ -6,8 +6,8 @@ Project name:
 Team Members:
 * Hao Mack Yang (gst-Z2od5sCatjVtRvH)
 
-Presentation Slide:
-* 
+Presentation:
+* [https://studio.youtube.com/video/ZSvtRcaG_Vc/livestreaming](https://youtube.com/live/ZSvtRcaG_Vc?feature=share)
 
 This **Washington Institute for STEM Entrepreneurship and Research** project demonstrates an alternative quantum computing method to optimize the portfolios based on the investor's preferences.
 
